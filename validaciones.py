@@ -1,0 +1,117 @@
+from db import get_connection
+from openpyxl import load_workbook
+
+
+def buscar_id_concepto_por_codigo(codigo_concepto):
+    """Devuelve el CIDCONCEPTODOCUMENTO dado un CCODIGOCONCEPTO (string visible al usuario)."""
+    if codigo_concepto is None:
+        return None
+
+    codigo = str(codigo_concepto).strip()
+    if codigo == "":
+        return None
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        sql = """
+            SELECT CIDCONCEPTODOCUMENTO
+            FROM admConceptos
+            WHERE CCODIGOCONCEPTO = ?
+        """
+        cursor.execute(sql, (codigo,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def cargar_conceptos_desde_excel(archivo_excel):
+    """
+    Lee los codigos de concepto (B1 factura, B2 pago) y retorna sus IDs.
+    """
+    wb = load_workbook(archivo_excel, data_only=True)
+    ws = wb["Config"]
+
+    codigo_factura = ws["B1"].value
+    codigo_pago = ws["B2"].value
+    wb.close()
+
+    id_factura = buscar_id_concepto_por_codigo(codigo_factura)
+    id_pago = buscar_id_concepto_por_codigo(codigo_pago)
+
+    return id_factura, id_pago
+
+
+def cliente_existe(codigo_cliente):
+    """Retorna los datos del cliente si existe, None si no existe"""
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+        SELECT CIDCLIENTEPROVEEDOR, CRAZONSOCIAL, CRFC
+        FROM admClientes
+        WHERE CCODIGOCLIENTE = ?
+        AND CTIPOCLIENTE = 1
+    """
+
+    cursor.execute(sql, (codigo_cliente,))
+    resultado = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if resultado:
+        return {
+            'cidclienteproveedor': resultado[0],
+            'crazonsocial': resultado[1],
+            'crfc': resultado[2]
+        }
+    return None
+
+
+def factura_existe(serie, folio, id_concepto_factura):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+        SELECT CIDDOCUMENTO
+        FROM admDocumentos
+        WHERE CSERIEDOCUMENTO = ?
+          AND CFOLIO = ?
+          AND CIDCONCEPTODOCUMENTO = ?
+          AND CPENDIENTE > 0
+    """
+
+    cursor.execute(sql, (serie, folio, id_concepto_factura))
+    row = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if row:
+        return row[0]
+    return None
+
+
+def pago_existe(serie, folio, id_concepto_pago):
+    """Verifica si el pago existe (usamos la misma tabla admDocumentos)"""
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+        SELECT 1
+        FROM admDocumentos
+        WHERE CSERIEDOCUMENTO = ?
+          AND CFOLIO = ?
+          AND CIDCONCEPTODOCUMENTO = ?
+    """
+
+    cursor.execute(sql, (serie, folio, id_concepto_pago))
+    existe = cursor.fetchone() is not None
+
+    cursor.close()
+    conn.close()
+
+    return existe

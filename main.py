@@ -9,16 +9,17 @@ from contpaqi_utils import (
     crear_asociacion,
 )
 from excel_utils import imprime_resultado, formatea_fecha_pago, leer_filas_desde_excel
-from validaciones import cliente_existe, factura_existe, pago_existe, cargar_conceptos_desde_excel
+from validaciones import cliente_existe, factura_existe, pago_existe, buscar_id_concepto_por_codigo
 
-from config import EXCEL_FILE, SHEET_NAME
+from config import EXCEL_FILE, SHEET_NAME, CODIGO_CONCEPTO_FACTURA, CODIGO_CONCEPTO_PAGO
 
 if __name__ == "__main__":
-    # Cargar codigo de conceptos desde Excel
-    id_concepto_factura, id_concepto_pago = cargar_conceptos_desde_excel(EXCEL_FILE)
+    # Cargar codigo de conceptos desde config.ini
+    id_concepto_factura = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_FACTURA)
+    id_concepto_pago = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_PAGO)
     
     if not id_concepto_factura or not id_concepto_pago:
-        print("Error: No se pudieron cargar los conceptos desde la configuración del Excel")
+        print("Error: No se pudieron cargar los conceptos desde la configuración")
         exit(1)
     
     facturas = leer_filas_desde_excel()

@@ -34,6 +34,7 @@ def _load_config() -> ConfigParser:
     required_config = {
         "database": ["server", "database", "user", "password", "driver"],
         "excel": ["file", "sheet_name"],
+        "conceptos": ["codigo_factura", "codigo_pago"],
     }
     
     for section, keys in required_config.items():
@@ -82,3 +83,6 @@ DB_DRIVER = _config.get("database", "driver")
 
 EXCEL_FILE = _config.get("excel", "file")
 SHEET_NAME = _config.get("excel", "sheet_name")
+
+CODIGO_CONCEPTO_FACTURA = _config.get("conceptos", "codigo_factura")
+CODIGO_CONCEPTO_PAGO = _config.get("conceptos", "codigo_pago")

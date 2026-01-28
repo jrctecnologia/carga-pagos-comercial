@@ -4,7 +4,7 @@ from openpyxl import load_workbook
 from config import EXCEL_FILE, SHEET_NAME
 
 def leer_filas_desde_excel():
-    """Lee todas las facturas del Excel y retorna una lista de tuplas con todos los datos necesarios"""
+    # Lee todas las facturas del Excel y retorna una lista de tuplas con todos los datos necesarios
     wb = load_workbook(EXCEL_FILE, data_only=True)
     ws = wb[SHEET_NAME]
 
@@ -33,6 +33,7 @@ def leer_filas_desde_excel():
     return facturas
 
 def formatea_fecha_pago(fecha_pago):
+    # Formatea la fecha de pago al formato YYYYMMDD requerido por Contpaqi
     if isinstance(fecha_pago, (datetime, date)):
         return fecha_pago.strftime("%Y%m%d")
     if fecha_pago is None:
@@ -47,6 +48,7 @@ def imprime_resultado(
     mensaje,
     columna_resultado="Q"
 ):
+    # Imprime el resultado del procesamiento en la columna especificada del Excel
     wb = load_workbook(archivo_excel)
     ws = wb[hoja]
 

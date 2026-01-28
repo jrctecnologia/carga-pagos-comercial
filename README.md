@@ -1,6 +1,6 @@
 # Carga masiva de pagos a CONTPAQi Comercial Premium
 
-Esta herramienta carga pagos masivos desde un archivo Excel y los aplica a facturas en CONTPAQi Comercial Premium mediante conexión ODBC a SQL Server. Valida clientes, facturas, monedas y existencia previa del pago; crea el documento de pago, su movimiento, asocia el pago a la factura y actualiza el saldo pendiente. El resultado de cada fila se escribe de vuelta en el Excel.
+Esta herramienta carga pagos masivos desde un archivo Excel y los aplica a facturas en CONTPAQi Comercial Premium mediante conexión ODBC a SQL Server. Valida clientes, facturas, monedas y existencia previa del pago; crea el documento de pago, su movimiento, asocia el pago a la factura y actualiza el saldo pendiente. El resultado de cada fila se escribe de vuelta en el Excel. El proceso registra todo en un archivo `log.txt`.
 
 ## Configuración
 
@@ -43,6 +43,10 @@ Estructura esperada de la hoja de datos:
 - **codigo_pago:** código visible del concepto de pago (`admConceptos.CCODIGOCONCEPTO`).
 
 Durante la ejecución, estos códigos se traducen a `CIDCONCEPTODOCUMENTO` y se usan para validar facturas y crear pagos.
+
+## Registro y alertas
+- Se crea o actualiza `log.txt` en la misma carpeta donde corre el script o el `.exe`.
+- Se registran el inicio, el resultado por fila y el resumen final.
 
 Notas adicionales:
 - Las monedas se validan por nombre; deben existir en `admMonedas`.

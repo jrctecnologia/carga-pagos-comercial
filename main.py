@@ -1,3 +1,5 @@
+import sys
+
 from contpaqi_utils import (
     actualizar_saldo_documento,
     crear_documento,
@@ -9,9 +11,12 @@ from contpaqi_utils import (
     crear_asociacion,
 )
 from excel_utils import imprime_resultado, formatea_fecha_pago, leer_filas_desde_excel
+from utils import _handle_exception, show_msgbox, log_line
 from validaciones import cliente_existe, factura_existe, pago_existe, buscar_id_concepto_por_codigo
 
 from config import EXCEL_FILE, SHEET_NAME, CODIGO_CONCEPTO_FACTURA, CODIGO_CONCEPTO_PAGO
+
+sys.excepthook = _handle_exception
 
 if __name__ == "__main__":
     # Cargar codigo de conceptos desde config.ini
@@ -19,12 +24,14 @@ if __name__ == "__main__":
     id_concepto_pago = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_PAGO)
     
     if not id_concepto_factura or not id_concepto_pago:
-        print("Error: No se pudieron cargar los conceptos desde la configuración")
-        exit(1)
+        log_line("Error: No se pudieron cargar los conceptos desde la configuracion.")
+        show_msgbox("error al realizar la operacion")
+        sys.exit(1)
     
     facturas = leer_filas_desde_excel()
-    
-    print(f"Procesando {len(facturas)} registro(s)...")
+    total_registros = len(facturas)
+    errores = 0
+    log_line(f"Procesando {total_registros} registro(s)...")
     
     for fila, codigo_cliente, serie_factura, folio_factura, moneda_factura, fecha_pago, serie_pago, folio_pago, importe_pago, impuesto1, porc_impuesto1, moneda_pago, tipo_cambio, referencia in facturas:
         resultado = None
@@ -113,6 +120,19 @@ if __name__ == "__main__":
             
         # Escribir resultado en el Excel
         imprime_resultado(EXCEL_FILE, SHEET_NAME, fila, resultado)
-    
-    print(f"Completado: {len(facturas)} registro(s) procesados.")
+
+        log_line(f"Fila {fila}: {resultado}")
+
+        if not (resultado and resultado.startswith("OK -") and "ERROR" not in resultado):
+            errores += 1
+
+    if total_registros == 0:
+        log_line("No se encontraron registros para procesar.")
+        show_msgbox("error al realizar la operacion")
+    elif errores == 0:
+        log_line(f"Completado: {total_registros} registro(s) procesados. Sin errores.")
+        show_msgbox("procesado correctamente")
+    else:
+        log_line(f"Completado: {total_registros} registro(s) procesados. Con errores: {errores}.")
+        show_msgbox("procesado con errores")
 

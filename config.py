@@ -3,27 +3,18 @@ from __future__ import annotations
 from configparser import ConfigParser
 from pathlib import Path
 import sys
-from utils import obtener_ruta_base
+from utils import log_line, obtener_ruta_base, show_msgbox
 
 BASE_DIR = Path(obtener_ruta_base())
 CONFIG_INI_PATH = BASE_DIR / "config.ini"
 
+
 def _load_config() -> ConfigParser:
-    """Carga config.ini. Si no existe o faltan claves, lanza error."""
+    # Carga config.ini. Si no existe o faltan claves, lanza error.
     if not CONFIG_INI_PATH.exists():
-        error_msg = f"ERROR: Archivo de configuración no encontrado: {CONFIG_INI_PATH}"
-        print(error_msg, file=sys.stderr)
-        alert_msg = f"⚠️ Archivo de configuración faltante\n\nDebería existir en:\n{CONFIG_INI_PATH}"
-        # Mostrar alerta visual en pantalla
-        try:
-            import tkinter as tk
-            from tkinter import messagebox
-            root = tk.Tk()
-            root.withdraw()
-            messagebox.showerror("Error de Configuración", alert_msg)
-            root.destroy()
-        except:
-            pass
+        error_msg = f"ERROR: Archivo de configuracion no encontrado: {CONFIG_INI_PATH}"
+        log_line(error_msg)
+        show_msgbox("no se pudo procesar la información")
         sys.exit(1)
     
     parser = ConfigParser()
@@ -38,34 +29,14 @@ def _load_config() -> ConfigParser:
     
     for section, keys in required_config.items():
         if not parser.has_section(section):
-            error_msg = f"ERROR: Falta la sección '[{section}]' en {CONFIG_INI_PATH}"
-            print(error_msg, file=sys.stderr)
-            alert_msg = f"⚠️ Configuración incompleta\n\nFalta la sección:\n[{section}]"
-            try:
-                import tkinter as tk
-                from tkinter import messagebox
-                root = tk.Tk()
-                root.withdraw()
-                messagebox.showerror("Error de Configuración", alert_msg)
-                root.destroy()
-            except:
-                pass
+            error_msg = f"ERROR: Falta la seccion '[{section}]' en {CONFIG_INI_PATH}"
+            log_line(error_msg)
             sys.exit(1)
         
         for key in keys:
             if not parser.has_option(section, key):
-                error_msg = f"ERROR: Falta la clave '{key}' en sección '[{section}]' en {CONFIG_INI_PATH}"
-                print(error_msg, file=sys.stderr)
-                alert_msg = f"⚠️ Configuración incompleta\n\nFalta en [{section}]:\n{key} = "
-                try:
-                    import tkinter as tk
-                    from tkinter import messagebox
-                    root = tk.Tk()
-                    root.withdraw()
-                    messagebox.showerror("Error de Configuración", alert_msg)
-                    root.destroy()
-                except:
-                    pass
+                error_msg = f"ERROR: Falta la clave '{key}' en seccion '[{section}]' en {CONFIG_INI_PATH}"
+                log_line(error_msg)
                 sys.exit(1)
     
     return parser

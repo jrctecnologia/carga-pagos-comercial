@@ -3,7 +3,7 @@ from datetime import datetime
 import uuid
 
 def obtener_ultimo_id(tabla, id_columna):
-    """Obtiene el último ID usado en una tabla específica."""
+    # Obtiene el último ID usado en una tabla específica.
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -19,7 +19,7 @@ def obtener_ultimo_id(tabla, id_columna):
     return 0
 
 def obtener_id_concepto(codigo_concepto):
-    """Obtiene el ID del concepto basado en su código"""
+    # Obtiene el ID del concepto basado en su código
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -40,7 +40,7 @@ def obtener_id_concepto(codigo_concepto):
     return None
 
 def obtener_id_moneda(nombre_moneda):
-    """Obtiene el ID de la moneda basado en su nombre"""
+    # Obtiene el ID de la moneda basado en su nombre
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -158,23 +158,7 @@ def obtener_plantilla_documento():
 
 
 def crear_documento(datos):
-    """
-    Crea un nuevo registro en admDocumentos.
-    
-    Args:
-        datos (dict): Diccionario con los campos a insertar. 
-        Los campos no especificados usarán sus valores DEFAULT de la BD.
-        
-    Returns:
-        int: El CIDDOCUMENTO del registro creado
-        
-    Ejemplo:
-        datos = obtener_plantilla_documento()
-        datos['CIDCONCEPTODOCUMENTO'] = 5
-        datos['CSERIEDOCUMENTO'] = 'P'
-        datos['CFOLIO'] = 100
-        nuevo_id = crear_documento(datos)
-    """
+    # Crea un nuevo registro en admDocumentos.
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -312,9 +296,11 @@ def obtener_plantilla_asociacion():
 
 
 def crear_asociacion(datos):
+    # Crea un nuevo registro en admAsocCargosAbonos.
     conn = get_connection()
     cursor = conn.cursor()
 
+    # Construir la consulta dinámicamente
     columnas = ', '.join(datos.keys())
     placeholders = ', '.join(['?' for _ in datos])
     valores = tuple(datos.values())
@@ -333,6 +319,7 @@ def crear_asociacion(datos):
     return (ciddoc_abono, ciddoc_cargo)
 
 def actualizar_saldo_documento(ciddocumento, importe_abono):
+    # Actualiza el saldo pendiente de un documento restando el importe del abono.
     conn = get_connection()
     cursor = conn.cursor()
 

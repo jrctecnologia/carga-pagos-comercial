@@ -1,9 +1,8 @@
 from db import get_connection
-from openpyxl import load_workbook
 
 
 def buscar_id_concepto_por_codigo(codigo_concepto):
-    """Devuelve el CIDCONCEPTODOCUMENTO dado un CCODIGOCONCEPTO (string visible al usuario)."""
+    # Devuelve el CIDCONCEPTODOCUMENTO dado un CCODIGOCONCEPTO.
     if codigo_concepto is None:
         return None
 
@@ -27,25 +26,8 @@ def buscar_id_concepto_por_codigo(codigo_concepto):
         conn.close()
 
 
-def cargar_conceptos_desde_excel(archivo_excel):
-    """
-    Lee los codigos de concepto (B1 factura, B2 pago) y retorna sus IDs.
-    """
-    wb = load_workbook(archivo_excel, data_only=True)
-    ws = wb["Config"]
-
-    codigo_factura = ws["B1"].value
-    codigo_pago = ws["B2"].value
-    wb.close()
-
-    id_factura = buscar_id_concepto_por_codigo(codigo_factura)
-    id_pago = buscar_id_concepto_por_codigo(codigo_pago)
-
-    return id_factura, id_pago
-
-
 def cliente_existe(codigo_cliente):
-    """Retorna los datos del cliente si existe, None si no existe"""
+    # Retorna los datos del cliente si existe, None si no existe
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -72,6 +54,7 @@ def cliente_existe(codigo_cliente):
 
 
 def factura_existe(serie, folio, id_concepto_factura):
+    # Verifica si la factura existe, tiene saldo pendiente y no está cancelada
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -82,6 +65,7 @@ def factura_existe(serie, folio, id_concepto_factura):
           AND CFOLIO = ?
           AND CIDCONCEPTODOCUMENTO = ?
           AND CPENDIENTE > 0
+          AND CCANCELADO = 0
     """
 
     cursor.execute(sql, (serie, folio, id_concepto_factura))
@@ -96,7 +80,7 @@ def factura_existe(serie, folio, id_concepto_factura):
 
 
 def pago_existe(serie, folio, id_concepto_pago):
-    """Verifica si el pago existe (usamos la misma tabla admDocumentos)"""
+    # Verifica si el pago existe (usamos la misma tabla admDocumentos)
     conn = get_connection()
     cursor = conn.cursor()
 

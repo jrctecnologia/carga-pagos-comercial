@@ -1,10 +1,11 @@
 # TODO - Roadmap
 
 ## High Priority
-- Actualizar tabla admAsocCargosAbonosImp
+- [ ] Actualizar tabla admAsocCargosAbonosImp
 
 ## Medium Priority
-- Verificar que el pago no exista en otro concepto
+- [ ] Verificar que el pago no exista en otro concepto
 
 ## Low Priority
-- Actualizar ultimo folio del concepto
+- [ ] Actualizar ultimo folio del concepto
+- [ ] Evitar duplicado del registro de resultados y log

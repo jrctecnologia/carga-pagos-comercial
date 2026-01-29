@@ -66,3 +66,6 @@ Estructura simple recomendada:
 
 Ejecución en desarrollo:
 - `python app/main.py`
+
+Compilación (PyInstaller):
+- Ejecuta desde la raíz: `pyinstaller --noconfirm --clean --workpath .\build --distpath .\dist main.spec`

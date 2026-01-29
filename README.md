@@ -60,5 +60,8 @@ Ejecución en desarrollo:
 Compilación (PyInstaller):
 - Ejecuta desde la raíz: `pyinstaller --noconfirm --clean --workpath .\build --distpath .\dist main.spec`
 
+## Pendientes
+Ver [TODO.md](TODO.md)
+
 ## Licencia
 Proyecto bajo Licencia MIT. Ver [LICENSE.md](LICENSE.md).

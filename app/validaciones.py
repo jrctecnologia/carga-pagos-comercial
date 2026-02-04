@@ -14,13 +14,17 @@ def buscar_id_concepto_por_codigo(codigo_concepto):
     cursor = conn.cursor()
     try:
         sql = """
-            SELECT CIDCONCEPTODOCUMENTO
+            SELECT CIDCONCEPTODOCUMENTO, CIDCUENTA
             FROM admConceptos
             WHERE CCODIGOCONCEPTO = ?
         """
         cursor.execute(sql, (codigo,))
         row = cursor.fetchone()
-        return row[0] if row else None
+        if row:
+            return {
+                'cidconceptodocumento': row[0],
+                'cidcuenta': row[1]
+            }
     finally:
         cursor.close()
         conn.close()

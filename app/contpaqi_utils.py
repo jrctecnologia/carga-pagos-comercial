@@ -18,27 +18,6 @@ def obtener_ultimo_id(tabla, id_columna):
         return resultado[0]
     return 0
 
-def obtener_id_concepto(codigo_concepto):
-    # Obtiene el ID del concepto basado en su código
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    sql = """
-        SELECT CIDCONCEPTODOCUMENTO
-        FROM admConceptos
-        WHERE CCODIGOCONCEPTO = ?
-    """
-
-    cursor.execute(sql, (codigo_concepto,))
-    resultado = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    if resultado:
-        return resultado[0]
-    return None
-
 def obtener_id_moneda(nombre_moneda):
     # Obtiene el ID de la moneda basado en su nombre
     conn = get_connection()
@@ -148,7 +127,7 @@ def obtener_plantilla_documento():
         'CGUIDDOCUMENTO': str(uuid.uuid4()),
         'CUSUARIO': 'SUPERVISOR',
         'CIDPROYECTO': 0,
-        'CIDCUENTA': 2,
+        'CIDCUENTA': 0,
         'CTRANSACTIONID': '',
         'CIDCOPIADE': 0,
         'CVERESQUE': '',

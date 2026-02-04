@@ -20,8 +20,11 @@ sys.excepthook = _handle_exception
 
 if __name__ == "__main__":
     # Cargar codigo de conceptos desde config.ini
-    id_concepto_factura = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_FACTURA)
-    id_concepto_pago = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_PAGO)
+    concepto_factura = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_FACTURA)
+    concepto_pago = buscar_id_concepto_por_codigo(CODIGO_CONCEPTO_PAGO)
+    
+    id_concepto_factura = concepto_factura['cidconceptodocumento'] if concepto_factura else None
+    id_concepto_pago = concepto_pago['cidconceptodocumento'] if concepto_pago else None
     
     if not id_concepto_factura or not id_concepto_pago:
         log_line("Error: No se pudieron cargar los conceptos desde la configuracion.")
@@ -77,6 +80,7 @@ if __name__ == "__main__":
             datos_nuevo_pago['CIDMONEDA'] = id_moneda_pago if id_moneda_pago else 1
             datos_nuevo_pago['CTIPOCAMBIO'] = tipo_cambio if tipo_cambio else 1
             datos_nuevo_pago['CREFERENCIA'] = referencia if referencia else ''
+            datos_nuevo_pago['CIDCUENTA'] = concepto_pago['cidcuenta']
             
             try:
                 documento_creado = crear_documento(datos_nuevo_pago)
